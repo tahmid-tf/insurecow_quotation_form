@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+  </head>
+  <body>
+    <div id="app">
+      <div>
+        <div style="display: flex; justify-content: space-between">
+          <!-- -------------------------- Left Side Form ------------------------------ -->
+
+          <div>
+            <p>Add Value</p>
+
+            <form>
+              <input type="text" ref="risk" placeholder="risk" /> <br />
+              <input type="number" ref="premium" placeholder="premium" /> <br />
+              <input type="number" ref="bdt" placeholder="bdt" /> <br />
+              <input type="number" ref="vat" placeholder="vat" /> <br /><br />
+              <button type="button" v-on:click="add()">Add</button>
+            </form>
+          </div>
+
+          <!-- -------------------------- Left Side Form ------------------------------ -->
+
+          <!-- -------------------------- Right Side Form ------------------------------ -->
+
+          <div>
+            <p>Edit Value</p>
+
+            <form>
+              <input
+                type="number"
+                ref="edit_id"
+                placeholder="edit id"
+                style="display: none"
+              /><br />
+              <input type="text" ref="risk_edit" placeholder="risk" /> <br />
+              <input type="number" ref="premium_edit" placeholder="premium" />
+              <br />
+              <input type="number" ref="bdt_edit" placeholder="bdt" /> <br />
+              <input type="number" ref="vat_edit" placeholder="vat" />
+              <br /><br />
+              <button type="button" v-on:click="update()">Update</button>
+            </form>
+          </div>
+
+          <!-- -------------------------- Right Side Form ------------------------------ -->
+        </div>
+
+        <!-- --------------------------- Table Data ----------------------- -->
+        <br /><br />
+        <table
+          style="
+            width: 100%;
+            align-items: center;
+            border: 1px solid rebeccapurple;
+          "
+        >
+          <tr>
+            <th>Risk</th>
+            <th>Premium</th>
+            <th>bdt</th>
+            <th>vat</th>
+            <th>Edit</th>
+            <th>Remove</th>
+          </tr>
+
+          <tr v-for="(item,index) in totalValue" :key="index">
+            <td align="center">{{ item.risk }}</td>
+            <td align="center">{{ item.premium }}</td>
+            <td align="center">{{ item.bdt }}</td>
+            <td align="center">{{ item.vat }}</td>
+            <td align="center">
+              <button v-on:click="edit(index)">Edit</button>
+            </td>
+
+            <td align="center">
+              <button v-on:click="remove(index)">Remove</button>
+            </td>
+          </tr>
+        </table>
+
+        <!-- --------------------------- Table Data ----------------------- -->
+        <div></div>
+      </div>
+    </div>
+  </body>
+</html>
+
+<script>
+  var app = new Vue({
+    el: "#app",
+    data: {
+      message: "Vue Js Test",
+      totalValue: [],
+    },
+    methods: {
+      add() {
+        var vm = this;
+        let objectValue = {};
+        objectValue.risk = this.$refs["risk"].value;
+        objectValue.bdt = this.$refs["bdt"].value;
+        objectValue.vat = this.$refs["vat"].value;
+        objectValue.premium = this.$refs["premium"].value;
+        vm.totalValue.push(objectValue);
+        // console.log(vm.totalValue);
+      },
+      edit($id) {
+        this.$refs["edit_id"].value = $id;
+        this.$refs["risk_edit"].value = this.totalValue[$id].risk;
+        this.$refs["premium_edit"].value = this.totalValue[$id].premium;
+        this.$refs["bdt_edit"].value = this.totalValue[$id].bdt;
+        this.$refs["vat_edit"].value = this.totalValue[$id].vat;
+      },
+
+      update() {
+        let updateObjectValue = {};
+
+        let $id = this.$refs["edit_id"].value;
+
+        updateObjectValue.risk = this.$refs["risk_edit"].value;
+        updateObjectValue.bdt = this.$refs["bdt_edit"].value;
+        updateObjectValue.vat = this.$refs["vat_edit"].value;
+        updateObjectValue.premium = this.$refs["premium_edit"].value;
+
+        this.totalValue.splice($id, 1, updateObjectValue);
+      },
+
+      remove($id) {
+        this.totalValue.slice($id);
+      },
+    },
+  });
+</script>
