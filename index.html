@@ -20,7 +20,7 @@
               <input type="text" ref="risk" placeholder="risk" /> <br />
               <input type="text" ref="premium" placeholder="premium" /> <br />
               <input type="number" ref="bdt" placeholder="bdt" /> <br />
-              <input type="number" ref="vat" placeholder="vat" /> <br /><br />
+              <!-- <input type="number" ref="vat" placeholder="vat" /> <br /><br /> -->
               <button type="button" v-on:click="add()">Add</button>
             </form>
           </div>
@@ -43,7 +43,7 @@
               <input type="text" ref="premium_edit" placeholder="premium" />
               <br />
               <input type="number" ref="bdt_edit" placeholder="bdt" /> <br />
-              <input type="number" ref="vat_edit" placeholder="vat" />
+              <!-- <input type="number" ref="vat_edit" placeholder="vat" /> -->
               <br /><br />
               <button type="button" v-on:click="update()" class="update-btn">
                 Update
@@ -67,7 +67,7 @@
             <th>Risk</th>
             <th>Premium</th>
             <th>bdt</th>
-            <th>vat</th>
+            <!-- <th>vat</th> -->
             <th>Edit</th>
             <th>Remove</th>
           </tr>
@@ -76,7 +76,7 @@
             <td align="center">{{ item.risk }}</td>
             <td align="center">{{ item.premium }}</td>
             <td align="center">{{ item.bdt }}</td>
-            <td align="center">{{ item.vat }}</td>
+            <!-- <td align="center">{{ item.vat }}</td> -->
             <td align="center">
               <button v-on:click="edit(index)" class="edit-btn">Edit</button>
             </td>
@@ -88,6 +88,11 @@
         </table>
 
         <!-- --------------------------- Table Data ----------------------- -->
+
+        <p>Total : {{ total }}</p>
+        <p>Vat : <input type="number" v-model="vat" /> %</p>
+        <p>With vat : {{ totalWithVat() }}</p>
+        <p>Total with vat: {{ total + withVat }}</p>
         <div></div>
       </div>
     </div>
@@ -100,17 +105,25 @@
     data: {
       message: "Vue Js Test",
       totalValue: [],
+      total: 0,
+      vat: 0,
+      withVat: 0,
     },
     methods: {
+      totalWithVat() {
+        this.withVat = Number(this.total * this.vat) / 100;
+        return this.withVat;
+      },
       add() {
         var vm = this;
         let objectValue = {};
         objectValue.risk = this.$refs["risk"].value;
         objectValue.bdt = this.$refs["bdt"].value;
-        objectValue.vat = this.$refs["vat"].value;
+        // objectValue.vat = this.$refs["vat"].value;
         objectValue.premium = this.$refs["premium"].value;
         vm.totalValue.push(objectValue);
-        console.log(vm.totalValue);
+
+        this.total += Number(objectValue.bdt);
       },
       edit($id) {
         document.querySelector(".edit-value-div").style.display = "inline";
@@ -119,7 +132,7 @@
         this.$refs["risk_edit"].value = this.totalValue[$id].risk;
         this.$refs["premium_edit"].value = this.totalValue[$id].premium;
         this.$refs["bdt_edit"].value = this.totalValue[$id].bdt;
-        this.$refs["vat_edit"].value = this.totalValue[$id].vat;
+        // this.$refs["vat_edit"].value = this.totalValue[$id].vat;
       },
 
       update() {
@@ -131,15 +144,27 @@
 
         updateObjectValue.risk = this.$refs["risk_edit"].value;
         updateObjectValue.bdt = this.$refs["bdt_edit"].value;
-        updateObjectValue.vat = this.$refs["vat_edit"].value;
+        // updateObjectValue.vat = this.$refs["vat_edit"].value;
         updateObjectValue.premium = this.$refs["premium_edit"].value;
 
         this.totalValue.splice($id, 1, updateObjectValue);
+
+        this.total = 0;
+
+        this.totalValue.forEach((element) => {
+          this.total += Number(element.bdt);
+        });
       },
 
       remove($id) {
         // console.log($id);
         this.totalValue.splice($id, 1);
+
+        this.total = 0;
+
+        this.totalValue.forEach((element) => {
+          this.total += Number(element.bdt);
+        });
       },
     },
   });
