@@ -19,7 +19,15 @@
             <form>
               <input type="text" ref="risk" placeholder="risk" /> <br />
               <input type="text" ref="premium" placeholder="premium" /> <br />
-              <input type="number" ref="bdt" placeholder="bdt" /> <br />
+              <input
+                type="number"
+                ref="bdt"
+                placeholder="bdt"
+                min="0"
+                oninput="this.value = 
+              !!this.value && Math.abs(this.value) >= 0 ? Math.abs(this.value) : null"
+              />
+              <br />
               <!-- <input type="number" ref="vat" placeholder="vat" /> <br /><br /> -->
               <button type="button" v-on:click="add()">Add</button>
             </form>
@@ -42,10 +50,22 @@
               <input type="text" ref="risk_edit" placeholder="risk" /> <br />
               <input type="text" ref="premium_edit" placeholder="premium" />
               <br />
-              <input type="number" ref="bdt_edit" placeholder="bdt" /> <br />
+              <input
+                type="number"
+                ref="bdt_edit"
+                placeholder="bdt"
+                min="0"
+                oninput="this.value = 
+              !!this.value && Math.abs(this.value) >= 0 ? Math.abs(this.value) : null"
+              />
+              <br />
               <!-- <input type="number" ref="vat_edit" placeholder="vat" /> -->
               <br /><br />
-              <button type="button" v-on:click="update()" class="update-btn">
+              <button
+                type="button"
+                v-on:click="update($event)"
+                class="update-btn"
+              >
                 Update
               </button>
             </form>
@@ -78,11 +98,13 @@
             <td align="center">{{ item.bdt }}</td>
             <!-- <td align="center">{{ item.vat }}</td> -->
             <td align="center">
-              <button v-on:click="edit(index)" class="edit-btn">Edit</button>
+              <button v-on:click="edit(index, $event)" class="edit-btn">
+                Edit
+              </button>
             </td>
 
             <td align="center">
-              <button v-on:click="remove(index)">Remove</button>
+              <button v-on:click="remove(index , $event)">Remove</button>
             </td>
           </tr>
         </table>
@@ -90,9 +112,19 @@
         <!-- --------------------------- Table Data ----------------------- -->
 
         <p>Total : {{ total }}</p>
-        <p>Vat : <input type="number" v-model="vat" /> %</p>
-        <p>With vat : {{ totalWithVat() }}</p>
-        <p>Total with vat: {{ total + withVat }}</p>
+        <p>
+          Vat :
+          <input
+            type="number"
+            v-model="vat"
+            min="0"
+            oninput="this.value = 
+          !!this.value && Math.abs(this.value) >= 0 ? Math.abs(this.value) : null"
+          />
+          %
+        </p>
+        <p>With vat : {{ withVatMethod() < 0 ? 0 : withVatMethod() }}</p>
+        <p>Total with vat: {{ totalWithVatMethod() }}</p>
         <div></div>
       </div>
     </div>
@@ -108,12 +140,20 @@
       total: 0,
       vat: 0,
       withVat: 0,
+      totalWithVat: 0,
     },
     methods: {
-      totalWithVat() {
+      withVatMethod() {
         this.withVat = Number(this.total * this.vat) / 100;
         return this.withVat;
       },
+
+      totalWithVatMethod() {
+        this.totalWithVat = this.total + this.withVat;
+
+        return this.totalWithVat <= 0 ? 0 : this.totalWithVat;
+      },
+
       add() {
         var vm = this;
         let objectValue = {};
@@ -125,7 +165,9 @@
 
         this.total += Number(objectValue.bdt);
       },
-      edit($id) {
+      edit($id, event) {
+        event.preventDefault();
+
         document.querySelector(".edit-value-div").style.display = "inline";
 
         this.$refs["edit_id"].value = $id;
@@ -135,7 +177,9 @@
         // this.$refs["vat_edit"].value = this.totalValue[$id].vat;
       },
 
-      update() {
+      update(event) {
+        event.preventDefault();
+
         document.querySelector(".edit-value-div").style.display = "none";
 
         let updateObjectValue = {};
@@ -156,8 +200,11 @@
         });
       },
 
-      remove($id) {
+      remove($id, event) {
+        document.querySelector(".edit-value-div").style.display = "none";
+
         // console.log($id);
+        event.preventDefault();
         this.totalValue.splice($id, 1);
 
         this.total = 0;
