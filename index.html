@@ -18,7 +18,7 @@
 
             <form>
               <input type="text" ref="risk" placeholder="risk" /> <br />
-              <input type="number" ref="premium" placeholder="premium" /> <br />
+              <input type="text" ref="premium" placeholder="premium" /> <br />
               <input type="number" ref="bdt" placeholder="bdt" /> <br />
               <input type="number" ref="vat" placeholder="vat" /> <br /><br />
               <button type="button" v-on:click="add()">Add</button>
@@ -29,7 +29,7 @@
 
           <!-- -------------------------- Right Side Form ------------------------------ -->
 
-          <div>
+          <div class="edit-value-div" style="display: none">
             <p>Edit Value</p>
 
             <form>
@@ -40,12 +40,14 @@
                 style="display: none"
               /><br />
               <input type="text" ref="risk_edit" placeholder="risk" /> <br />
-              <input type="number" ref="premium_edit" placeholder="premium" />
+              <input type="text" ref="premium_edit" placeholder="premium" />
               <br />
               <input type="number" ref="bdt_edit" placeholder="bdt" /> <br />
               <input type="number" ref="vat_edit" placeholder="vat" />
               <br /><br />
-              <button type="button" v-on:click="update()">Update</button>
+              <button type="button" v-on:click="update()" class="update-btn">
+                Update
+              </button>
             </form>
           </div>
 
@@ -76,7 +78,7 @@
             <td align="center">{{ item.bdt }}</td>
             <td align="center">{{ item.vat }}</td>
             <td align="center">
-              <button v-on:click="edit(index)">Edit</button>
+              <button v-on:click="edit(index)" class="edit-btn">Edit</button>
             </td>
 
             <td align="center">
@@ -108,9 +110,11 @@
         objectValue.vat = this.$refs["vat"].value;
         objectValue.premium = this.$refs["premium"].value;
         vm.totalValue.push(objectValue);
-        // console.log(vm.totalValue);
+        console.log(vm.totalValue);
       },
       edit($id) {
+        document.querySelector(".edit-value-div").style.display = "inline";
+
         this.$refs["edit_id"].value = $id;
         this.$refs["risk_edit"].value = this.totalValue[$id].risk;
         this.$refs["premium_edit"].value = this.totalValue[$id].premium;
@@ -119,6 +123,8 @@
       },
 
       update() {
+        document.querySelector(".edit-value-div").style.display = "none";
+
         let updateObjectValue = {};
 
         let $id = this.$refs["edit_id"].value;
@@ -132,7 +138,8 @@
       },
 
       remove($id) {
-        this.totalValue.slice($id);
+        // console.log($id);
+        this.totalValue.splice($id, 1);
       },
     },
   });
